@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/login_page"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="top"
+    android:background="#FFFBDE">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/round_corner"
+        android:backgroundTint="#FFFBDE"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="219dp"
+            android:layout_height="72dp"
+            android:layout_margin="150dp"
+            android:layout_gravity="center"
+            android:background="@drawable/round_corner">
+
+            <View
+                android:layout_width="219dp"
+                android:layout_height="72dp"
+                android:layout_gravity="center"
+                android:background="@drawable/round_corner"
+                android:backgroundTint="#90D1CA"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Welcome Back to Your Wardrobe"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:textColor="#3A0519"/>
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="300dp"
+            android:layout_height="298dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="-100dp"
+            android:background="@drawable/round_corner"
+            android:backgroundTint="#90D1CA"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="80dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="21dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Email: "
+                    android:textColor="#3A0519"
+                    android:textStyle="bold" />
+
+                <FrameLayout
+                    android:layout_width="132dp"
+                    android:layout_height="21dp"
+                    android:layout_marginTop="10dp">
+
+                    <EditText
+                        android:id="@+id/email"
+                        android:layout_width="130dp"
+                        android:layout_height="19dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/round_corner"
+                        android:backgroundTint="#FFFBDE"
+                        android:inputType="textEmailAddress"
+                        android:paddingStart="2dp"
+                        android:paddingEnd="2dp"
+                        android:textSize="14sp"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginEnd="2dp">
+                    </EditText>
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="21dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Password: "
+                    android:textColor="#3A0519"
+                    android:textStyle="bold" />
+
+                <FrameLayout
+                    android:layout_width="132dp"
+                    android:layout_height="21dp"
+                    android:layout_marginTop="10dp">
+
+                    <EditText
+                        android:id="@+id/password"
+                        android:layout_width="130dp"
+                        android:layout_height="19dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/round_corner"
+                        android:backgroundTint="#FFFBDE"
+                        android:inputType="textWebPassword"
+                        android:paddingStart="2dp"
+                        android:paddingEnd="2dp"
+                        android:textSize="14sp"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginEnd="2dp">
+                    </EditText>
+                </FrameLayout>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/login_button"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="50dp"
+                android:backgroundTint="#096B68"
+                android:text="Login"
+                android:textColor="#3A0519">
+
+            </Button>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="310dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/admin_signin_button"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:backgroundTint="#096B68"
+                android:text="Admin sign in"
+                android:textColor="#3A0519">
+            </Button>
+
+            <Button
+                android:id="@+id/member_signin_button"
+                android:layout_width="157dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
+                android:backgroundTint="#096B68"
+                android:text="Member sign in"
+                android:textColor="#3A0519">
+            </Button>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/sign_up_button"
+            android:layout_width="160dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:backgroundTint="#096B68"
+            android:text="Sign up"
+            android:textColor="#3A0519">
+        </Button>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/member_signin_page"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="top"
+    android:background="#FFCDB2">
+
+    <LinearLayout
+        android:layout_width="265dp"
+        android:layout_height="352dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/round_corner"
+        android:backgroundTint="#FFB4A2"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="219dp"
+            android:layout_height="72dp"
+            android:layout_gravity="center"
+            android:layout_margin="50dp"
+            android:background="@drawable/round_corner">
+
+            <View
+                android:layout_width="219dp"
+                android:layout_height="72dp"
+                android:layout_gravity="center"
+                android:background="@drawable/round_corner"
+                android:backgroundTint="#E5989B" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Welcome Back to Your Wardrobe"
+                android:textAlignment="center"
+                android:textColor="#3A0519"
+                android:textStyle="bold" />
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="219dp"
+            android:layout_height="172dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="-20dp"
+            android:background="@drawable/round_corner"
+            android:backgroundTint="#E5989B"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="21dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Member Name: "
+                    android:textColor="#3A0519"
+                    android:textStyle="bold" />
+
+                <FrameLayout
+                    android:layout_width="132dp"
+                    android:layout_height="21dp"
+                    android:layout_marginTop="10dp">
+
+                    <EditText
+                        android:id="@+id/username"
+                        android:layout_width="110dp"
+                        android:layout_height="19dp"
+                        android:layout_gravity="center"
+                        android:layout_marginRight="10dp"
+                        android:background="@drawable/round_corner"
+                        android:backgroundTint="#FFFFFF"
+                        android:inputType="textPersonName"
+                        android:paddingStart="2dp"
+                        android:paddingEnd="2dp"
+                        android:textSize="14sp">
+                    </EditText>
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="21dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Password: "
+                    android:textColor="#3A0519"
+                    android:textStyle="bold" />
+
+                <FrameLayout
+                    android:layout_width="132dp"
+                    android:layout_height="21dp"
+                    android:layout_marginTop="10dp">
+
+                    <EditText
+                        android:id="@+id/password"
+                        android:layout_width="130dp"
+                        android:layout_height="19dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/round_corner"
+                        android:backgroundTint="#FFFFFF"
+                        android:inputType="textWebPassword"
+                        android:paddingStart="2dp"
+                        android:paddingEnd="2dp"
+                        android:textSize="14sp">
+                    </EditText>
+                </FrameLayout>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/member_login_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:backgroundTint="#80B5828C"
+                android:text="Login"
+                android:textColor="#3A0519">
+
+            </Button>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/round_corner"
+            android:backgroundTint="#E5989B">
+        </View>
+
+        <ImageButton
+            android:id="@+id/return_button"
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="-70dp"
+            android:background="@drawable/ic_return_button"/>
+
+    </LinearLayout>
+
+
+</RelativeLayout>
