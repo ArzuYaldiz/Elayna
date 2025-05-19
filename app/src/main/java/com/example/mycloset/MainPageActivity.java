@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainPageActivity extends AppCompatActivity {
-
     private Button btnWinter, btnSummer, btnAll, btnTop, btnBottom, btnShoe;
     private RecyclerView recyclerClothes;
     private ClothesAdapter clothesAdapter;
