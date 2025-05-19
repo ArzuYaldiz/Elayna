@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Elayna</string>
+    <string name="edit_profile_information">Edit profile information</string>
+    <string name="profile_information">Profile Information</string>
+    <string name="address">Address</string>
+    <string name="language">Language</string>
+    <string name="private_policy">Private Policy</string>
+    <string name="exit">Exit</string>
+    <string name="main">Main</string>
+    <string name="search">Search</string>
+    <string name="accessory">Accessory</string>
+    <string name="profile">Profile</string>
 </resources>

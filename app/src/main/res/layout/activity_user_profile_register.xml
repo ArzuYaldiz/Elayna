@@ -88,13 +88,13 @@
                         android:id="@+id/hair_color_blue"
                         android:layout_width="50dp"
                         android:layout_height="match_parent"
-                        android:background="@drawable/circle"
                         android:layout_marginStart="7.5dp"
-                        android:src="@drawable/hair_blue"
-                        android:scaleType="centerInside"
-                        android:padding="4dp"
+                        android:background="@drawable/circle"
                         android:clickable="true"
-                        android:focusable="true"/>
+                        android:focusable="true"
+                        android:padding="4dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/hair_blue" />
 
                     <ImageButton
                         android:id="@+id/hair_color_pink"

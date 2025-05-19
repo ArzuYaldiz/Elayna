@@ -18,20 +18,145 @@
             android:layout_height="200dp"
             android:orientation="horizontal">
 
+            <ImageButton
+                android:id="@+id/return_button"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@android:drawable/ic_media_previous"
+                android:background="@color/white"
+                android:backgroundTint="#096B68"/>
+
+
             <ImageView
                 android:id="@+id/profile_picture_profile"
-                android:layout_width="90dp"
-                android:layout_height="90dp"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
                 android:layout_gravity="center"
-                android:layout_marginStart="30dp"
+                android:layout_marginStart="-20dp"
+                android:layout_marginTop="20dp"
                 android:background="@drawable/profile_photo"
                 android:scaleType="centerInside"
                 android:src="@drawable/user" />
+            
+            <TextView
+                android:id="@+id/username_pp"
+                android:layout_width="150dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="70dp"
+                android:background="@drawable/round_corner"
+                android:backgroundTint="#FFFBDE"
+                android:textAlignment="center"
+                android:textSize="20sp"/>
 
-
+            <Button
+                android:id="@+id/edit_information_button"
+                android:layout_width="200dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="-150dp"
+                android:layout_marginTop="130dp"
+                android:backgroundTint="#129990"
+                android:text="@string/edit_profile_information"/>
 
         </LinearLayout>
 
+        <Button
+            android:id="@+id/see_profile_information_button"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="50dp"
+            android:backgroundTint="#129990"
+            android:text="@string/profile_information"
+            android:textSize="20sp"/>
+
+        <Button
+            android:id="@+id/address_button"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="#129990"
+            android:text="@string/address"
+            android:textSize="20sp"/>
+
+        <Button
+            android:id="@+id/language_button"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="#129990"
+            android:text="@string/language"
+            android:textSize="20sp"/>
+
+        <Button
+            android:id="@+id/private_policy_button"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="#129990"
+            android:text="@string/private_policy"
+            android:textSize="20sp"/>
+
+        <Button
+            android:id="@+id/exit_button"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="#129990"
+            android:text="@string/exit"
+            android:textSize="20sp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="65dp"
+            android:background="#096B68">
+
+            <Button
+                android:id="@+id/main_button"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:src="@color/white"
+                android:backgroundTint="#096B68"
+                android:text="@string/main"
+                android:textSize="14sp"/>
+
+            <Button
+                android:id="@+id/search_button"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:src="@color/white"
+                android:backgroundTint="#096B68"
+                android:text="@string/search"
+                android:textSize="14sp"/>
+
+            <Button
+                android:id="@+id/accessory_button"
+                android:layout_width="115dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:src="@color/white"
+                android:backgroundTint="#096B68"
+                android:text="@string/accessory"
+                android:textSize="14sp"/>
+
+            <Button
+                android:id="@+id/profile_button"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:textAlignment="textStart"
+                android:src="@color/white"
+                android:backgroundTint="#096B68"
+                android:text="@string/profile"
+                android:textSize="14sp"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
