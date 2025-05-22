@@ -122,7 +122,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                     else{
                         //burada ana sayfaya yönlendirme
-                        Intent i = new Intent(getApplicationContext(),ProfilePageActivity.class);
+                        Intent i = new Intent(getApplicationContext(),AddingClothActivity.class);
                         startActivity(i);
                     }
 

@@ -12,4 +12,8 @@ public class AndroidUtil {
     public static void setProfilePic(Context context, Uri imageUri, ImageView imageView){
         Glide.with(context).load(imageUri).apply(RequestOptions.circleCropTransform()).into(imageView);
     }
+
+    public static void setClothObjPic(Context context, Uri objUri, ImageView imageView){
+        Glide.with(context).load(objUri).apply(RequestOptions.circleCropTransform()).into(imageView);
+    }
 }

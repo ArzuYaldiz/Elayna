@@ -33,4 +33,15 @@ public class FirebaseUtil {
     public static void setProfilePic(Context context, Uri imageUri, ImageView imageView){
         Glide.with(context).load(imageUri).apply(RequestOptions.circleCropTransform()).into(imageView);
     }
+
+    public static StorageReference getWardrobeItemStorageRef(String user_id){
+        FirebaseStorage storage = FirebaseStorage.getInstance("gs://elayna-8c765.firebasestorage.app");
+        return storage.getReference().child("Wardrobe")
+                .child("wardrobe_item_"+user_id + ".jpg");
+    }
+
+    public static StorageReference getWardrobeObjStorageRef(String user_id){
+        return FirebaseStorage.getInstance().getReference().child("Wardrobe")
+                .child("wardrobe_item_"+user_id + ".obj");
+    }
 }
