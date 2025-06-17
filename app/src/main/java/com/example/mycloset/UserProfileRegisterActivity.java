@@ -25,12 +25,16 @@ import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.appcheck.FirebaseAppCheck;
 import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 
 import java.io.InputStream;
 import java.util.Objects;
+import java.util.UUID;
 
 import APIService.AuthService;
 import APIService.UserService;
@@ -68,6 +72,7 @@ public class UserProfileRegisterActivity extends AppCompatActivity {
 
     private String imageUrl;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +98,7 @@ public class UserProfileRegisterActivity extends AppCompatActivity {
         findViews();
         selectHairColor();
 
+
         profile_picture.setOnClickListener((v)->{
             ImagePicker.with(this).cropSquare().compress(512).maxResultSize(512,512)
                     .createIntent(new Function1<Intent, Unit>() {
@@ -104,8 +110,11 @@ public class UserProfileRegisterActivity extends AppCompatActivity {
                     });
         });
 
+
+
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
+                .baseUrl("http://192.168.170.3:8080/")
+                //.baseUrl("http://10.0.2.2:8080/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

@@ -19,8 +19,13 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.mycloset.dataClasses.AuthenticationRequestDto;
 import com.example.mycloset.dataClasses.RegisterRequestDto;
 import com.example.mycloset.dataClasses.RegisterResponseDto;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.appcheck.FirebaseAppCheck;
+import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory;
+import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.Firebase;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
@@ -50,6 +55,14 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        FirebaseApp.initializeApp(/*context=*/ this);
+
+        // Get the FirebaseAppCheck instance
+        FirebaseAppCheck firebaseAppCheck = FirebaseAppCheck.getInstance();
+        firebaseAppCheck.installAppCheckProviderFactory(
+                PlayIntegrityAppCheckProviderFactory.getInstance()
+        );
+        Log.d("AppCheckInit", "Firebase App Check initialized with DebugProvider using provided secret");
 
         findViews();
         signup();
@@ -57,7 +70,8 @@ public class LoginActivity extends AppCompatActivity {
         memberSignIn();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
+                .baseUrl("http://192.168.170.3:8080/")
+                //.baseUrl("http://10.0.2.2:8080/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -95,7 +109,6 @@ public class LoginActivity extends AppCompatActivity {
                     RegisterResponseDto res = response.body();
                     String user_id = String.valueOf(response.body().getId());
 
-
                     builder.setTitle("Successfully logged in")//delete later
                             .setMessage("Welcome back to Elayna")
                             .setCancelable(true)
@@ -122,8 +135,10 @@ public class LoginActivity extends AppCompatActivity {
                     }
                     else{
                         //burada ana sayfaya yönlendirme
-                        Intent i = new Intent(getApplicationContext(),AddingClothActivity.class);
+                        Intent i = new Intent(getApplicationContext(),ClothImageActivity2.class);
                         startActivity(i);
+                        /*Intent i = new Intent(getApplicationContext(),ClothImageActivity.class);
+                        startActivity(i);*/
                     }
 
 

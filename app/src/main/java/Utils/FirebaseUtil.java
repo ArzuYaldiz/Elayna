@@ -2,6 +2,7 @@ package Utils;
 
 
 import android.content.Context;
+import android.media.Image;
 import android.net.Uri;
 import android.widget.ImageView;
 
@@ -35,13 +36,14 @@ public class FirebaseUtil {
     }
 
     public static StorageReference getWardrobeItemStorageRef(String user_id){
-        FirebaseStorage storage = FirebaseStorage.getInstance("gs://elayna-8c765.firebasestorage.app");
-        return storage.getReference().child("Wardrobe")
+        return FirebaseStorage.getInstance().getReference().child("Wardrobe")
                 .child("wardrobe_item_"+user_id + ".jpg");
     }
 
-    public static StorageReference getWardrobeObjStorageRef(String user_id){
+    public static StorageReference getWardrobeGlbStorageRef(String user_id){
         return FirebaseStorage.getInstance().getReference().child("Wardrobe")
-                .child("wardrobe_item_"+user_id + ".obj");
+                .child("wardrobe_item_"+user_id + ".glb");
     }
+
+
 }

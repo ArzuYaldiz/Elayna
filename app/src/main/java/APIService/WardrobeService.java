@@ -18,4 +18,5 @@ public interface WardrobeService {
     @GET("/wardrobe/{TASK_ID}")
     Call<RegisterResponseDto> GetObjFromMeshy(@Path("TASK_ID") String taskId, @Query("user_id") int userId);
 
+
 }

@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -84,10 +85,11 @@
                 <Button
                     android:id="@+id/btn_bottom"
                     android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@color/white"
-                    android:layout_height="wrap_content"
-                    android:text="Bottom"/>
+                    android:text="Bottom" />
+
                 <Button
                     android:id="@+id/btn_shoe"
                     android:layout_width="0dp"
@@ -101,14 +103,6 @@
 
 
         <!-- Kıyafetlerin listeleneceği alan (RecyclerView) -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_clothes"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="@color/white"
-            android:layout_weight="1"
-            android:layout_marginTop="8dp"
-            android:padding="8dp"/>
     </LinearLayout>
 
     <!-- Alt menü (BottomNavigationView) -->
@@ -143,4 +137,14 @@
         app:layout_constraintStart_toEndOf="@id/btn_back"
         android:layout_marginTop="12dp"
         android:layout_marginStart="4dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_clothes"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/white"
+        android:padding="8dp"
+        tools:layout_editor_absoluteX="90dp"
+        tools:layout_editor_absoluteY="117dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

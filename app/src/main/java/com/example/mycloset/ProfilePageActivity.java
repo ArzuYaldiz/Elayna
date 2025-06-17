@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +28,8 @@ public class ProfilePageActivity extends AppCompatActivity {
     private TextView usernameTextview;
     private int intUserId;
 
+    private Button addClothButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +50,8 @@ public class ProfilePageActivity extends AppCompatActivity {
                 });
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/")
+                .baseUrl("http://192.168.170.3:8080/")
+                //.baseUrl("http://10.0.2.2:8080/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -88,10 +92,19 @@ public class ProfilePageActivity extends AppCompatActivity {
 
         });
 
+        addClothButton.setOnClickListener(v -> {
+            Intent i = new Intent(getApplicationContext(),AddingClothActivity.class);
+            startActivity(i);
+        });
+
+
+
     }
 
     private void findViews(){
         profile_pic = findViewById(R.id.profile_picture_profile);
         usernameTextview = findViewById(R.id.username_pp);
+        addClothButton =findViewById(R.id.wardrobe_button);
+
     }
 }

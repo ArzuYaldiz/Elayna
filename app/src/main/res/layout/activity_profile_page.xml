@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="top"
-    android:background="#FFFBDE">
+    android:background="#FFFBDE"
+    android:id="@+id/profile_page">
 
     <LinearLayout
         android:layout_width="380dp"
@@ -52,7 +55,7 @@
             <Button
                 android:id="@+id/edit_information_button"
                 android:layout_width="200dp"
-                android:layout_height="40dp"
+                android:layout_height="50dp"
                 android:layout_marginStart="-150dp"
                 android:layout_marginTop="130dp"
                 android:backgroundTint="#129990"
@@ -71,13 +74,13 @@
             android:textSize="20sp"/>
 
         <Button
-            android:id="@+id/address_button"
+            android:id="@+id/wardrobe_button"
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
             android:backgroundTint="#129990"
-            android:text="@string/address"
+            android:text="Add A Cloth"
             android:textSize="20sp"/>
 
         <Button
