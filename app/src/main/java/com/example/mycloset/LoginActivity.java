@@ -70,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
         memberSignIn();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.170.3:8080/")
+                .baseUrl("http://192.168.147.3:8080/")
                 //.baseUrl("http://10.0.2.2:8080/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -134,8 +134,10 @@ public class LoginActivity extends AppCompatActivity {
                         startActivity(i);
                     }
                     else{
+                        getSharedPreferences("myClosetPrefs", MODE_PRIVATE)
+                                .getString("userId", null);
                         //burada ana sayfaya yönlendirme
-                        Intent i = new Intent(getApplicationContext(),ClothImageActivity2.class);
+                        Intent i = new Intent(getApplicationContext(),ProfilePageActivity.class);
                         startActivity(i);
                         /*Intent i = new Intent(getApplicationContext(),ClothImageActivity.class);
                         startActivity(i);*/

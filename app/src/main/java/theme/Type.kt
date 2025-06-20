@@ -1,4 +1,4 @@
-package com.example.mycloset;
+package theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

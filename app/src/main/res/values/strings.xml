@@ -11,4 +11,9 @@
     <string name="accessory">Accessory</string>
     <string name="profile">Profile</string>
     <string name="point_your_phone_down" />
+    <string name="all">All</string>
+    <string name="top">Top</string>
+    <string name="bottom">Bottom</string>
+    <string name="shoe">Shoe</string>
+    <string name="winter">Winter</string>
 </resources>

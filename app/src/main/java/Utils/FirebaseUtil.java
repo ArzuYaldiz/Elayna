@@ -4,6 +4,7 @@ package Utils;
 import android.content.Context;
 import android.media.Image;
 import android.net.Uri;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -39,11 +40,32 @@ public class FirebaseUtil {
         return FirebaseStorage.getInstance().getReference().child("Wardrobe")
                 .child("wardrobe_item_"+user_id + ".jpg");
     }
+    public static StorageReference getWardrobeItemStorageRefNew(String user_id, String season, String type){
+        if(season != null)
+            return FirebaseStorage.getInstance().getReference().child("Wardrobe")
+                .child("wardrobe_item_"+season+type+user_id + ".jpg");
+        return FirebaseStorage.getInstance().getReference().child("Wardrobe")
+                .child("wardrobe_item_"+type+user_id + ".jpg");
+    }
+    public static void setWardrobeItemJpg(Context context, Uri imageUri, ImageButton imageButton){
+        Glide.with(context).load(imageUri).apply(RequestOptions.noTransformation()).into(imageButton);
+    }
 
     public static StorageReference getWardrobeGlbStorageRef(String user_id){
-        return FirebaseStorage.getInstance().getReference().child("Wardrobe")
+        return FirebaseStorage.getInstance().getReference().child("Wardrobe").child(user_id)
                 .child("wardrobe_item_"+user_id + ".glb");
     }
 
+    public static StorageReference getWardrobeGlbStorageRefName(String user_id){
+        return FirebaseStorage.getInstance().getReference().child("Wardrobe")
+                .child("wardrobe_item_"+user_id + ".glb");
+    }
+    public static StorageReference getWardrobeGlbStorageRefNew(String user_id, String season, String type){
+        if(season != null)
+            return FirebaseStorage.getInstance().getReference().child("Wardrobe")
+                    .child("wardrobe_item_"+season+type+user_id + "..glb");
+        return FirebaseStorage.getInstance().getReference().child("Wardrobe")
+                .child("wardrobe_item_"+type+user_id + "..glb");
+    }
 
 }

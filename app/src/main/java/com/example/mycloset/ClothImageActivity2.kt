@@ -1,172 +1,129 @@
 package com.example.mycloset;
 
+import Utils.FirebaseUtil
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.text.Layout.Alignment
 import android.util.Log
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.ar.core.Config
-import com.example.mycloset.ARMenuTheme
-import com.example.mycloset.Translucent
-import io.github.sceneview.ar.ARScene
+import com.google.firebase.storage.FirebaseStorage
+import io.github.sceneview.ar.ArSceneView
 import io.github.sceneview.ar.node.ArModelNode
-import io.github.sceneview.ar.node.ArNode
 import io.github.sceneview.ar.node.PlacementMode
+import kotlin.collections.mutableListOf
+import kotlin.toString
+
 
 class ClothImageActivity2 : ComponentActivity() {
+
+    private lateinit var arSceneView: ArSceneView
+    private lateinit var modelNode: ArModelNode
+
+    private lateinit var recyclerView: RecyclerView;
+    private var user_id: String? = null
+
+    data class clothsJpg(var clothname:String, var imageId: Uri)//Food
+    data class clothsGlb(var modelname:String,var modelId:Uri)
+
+    private var clothList = mutableListOf<clothsJpg>()
+    private var modelList = mutableListOf<clothsGlb>()
+
+
+    private var currentIndex = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            ARMenuTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Box(modifier = Modifier.fillMaxSize()){
-                        val currentModel = remember {
-                            mutableStateOf("burger")
-                        }
-                        ARScreen(currentModel.value)
-                        Menu(modifier = Modifier.align(Alignment.BottomCenter)){
-                            currentModel.value = it
-                        }
+        setContentView(R.layout.activity_cloth_image2)
 
+        Log.d("DEBUG", "Firebase items found, starting to load URIs")
+
+        if (checkSelfPermission(android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(arrayOf(android.Manifest.permission.CAMERA), 101)
+        } else {
+            setupCameraAndAR()
+        }
+
+        //setupARScene()
+    }
+
+    private fun setupCameraAndAR() {
+        arSceneView = findViewById(R.id.cameraView)
+        recyclerView = findViewById(R.id.recycler_clothes)
+        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+
+        user_id = getSharedPreferences("myClosetPrefs", MODE_PRIVATE)
+            .getString("userId", null)
+
+        val storageRef = FirebaseStorage.getInstance().reference.child("Wardrobe/$user_id")
+
+        // Initialize adapter ONCE with an empty list
+        val adapter = CustomAdapter(clothList) { cloth ->
+            // Only load model when button is clicked
+            val modelRef = FirebaseUtil.getWardrobeGlbStorageRef(user_id)
+
+            Log.d("GLB_DOWNLOAD", "Model URL: $modelRef")
+            modelRef.downloadUrl.addOnSuccessListener { uri ->
+                loadModel(uri.toString())
+            }.addOnFailureListener {
+                Log.e("GLB_DOWNLOAD", "Failed to download model for ${cloth.clothname}", it)
+                Toast.makeText(this, "Model not found", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        recyclerView.adapter = adapter
+
+        storageRef.listAll()
+            .addOnSuccessListener { listResult ->
+                for (item in listResult.items) {
+                    if (item.name.endsWith(".jpg")) {
+                        item.downloadUrl.addOnSuccessListener { uri ->
+                            val name = item.name.removeSuffix(".jpg")
+                            val cloth = clothsJpg(name, uri)
+                            clothList.add(cloth)
+                            adapter.notifyItemInserted(clothList.size - 1)
+                        }
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun Menu(modifier: Modifier,onClick:(String)->Unit) {
-    var currentIndex by remember {
-        mutableStateOf(0)
-    }
-
-    val itemsList = listOf(
-        Food("burger",R.drawable.burger),
-        Food("instant",R.drawable.instant),
-        Food("momos",R.drawable.momos),
-        Food("pizza",R.drawable.pizza),
-        Food("ramen",R.drawable.ramen),
-
-        )
-    fun updateIndex(offset:Int){
-        currentIndex = (currentIndex+offset + itemsList.size) % itemsList.size
-        onClick(itemsList[currentIndex].name)
-    }
-    Row(modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceAround
-    ) {
-        IconButton(onClick = {
-            updateIndex(-1)
-        }) {
-            Icon(painter = painterResource(id = R.drawable.baseline_arrow_back_ios_24), contentDescription ="previous" )
-        }
-
-        CircularImage(imageId = itemsList[currentIndex].imageId )
-
-        IconButton(onClick = {
-            updateIndex(1)
-        }) {
-            Icon(painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24), contentDescription ="next")
-        }
-    }
-
-}
-
-@Composable
-fun CircularImage(
-    modifier: Modifier=Modifier,
-    imageId: Int
-) {
-    Box(modifier = modifier
-        .size(140.dp)
-        .clip(CircleShape)
-        .border(width = 3.dp, Translucent, CircleShape)
-    ){
-        Image(painter = painterResource(id = imageId), contentDescription = null, modifier = Modifier.size(140.dp), contentScale = ContentScale.FillBounds)
-    }
-}
-
-@Composable
-fun ARScreen(model:String) {
-    val nodes = remember {
-        mutableListOf<ArNode>()
-    }
-    val modelNode = remember {
-        mutableStateOf<ArModelNode?>(null)
-    }
-    val placeModelButton = remember {
-        mutableStateOf(false)
-    }
-    Box(modifier = Modifier.fillMaxSize()){
-        ARScene(
-            modifier = Modifier.fillMaxSize(),
-            nodes = nodes,
-            planeRenderer = true,
-            onCreate = {arSceneView ->
-                arSceneView.lightEstimationMode = Config.LightEstimationMode.DISABLED
-                arSceneView.planeRenderer.isShadowReceiver = false
-                modelNode.value = ArModelNode(arSceneView.engine,PlacementMode.INSTANT).apply {
-                    loadModelGlbAsync(
-                        glbFileLocation = "models/${model}.glb",
-                        scaleToUnits = 0.8f
-                    ){
-
-                    }
-                    onAnchorChanged = {
-                        placeModelButton.value = !isAnchored
-                    }
-                    onHitResult = {node, hitResult ->
-                        placeModelButton.value = node.isTracking
-                    }
-
-                }
-                nodes.add(modelNode.value!!)
-            },
-            onSessionCreate = {
-                planeRenderer.isVisible = false
+            .addOnFailureListener { exception ->
+                Log.e("Firebase", "Error loading wardrobe items", exception)
             }
-        )
-        if(placeModelButton.value){
-            Button(onClick = {
-                modelNode.value?.anchor()
-            }, modifier = Modifier.align(Alignment.Center)) {
-                Text(text = "Place It")
-            }
-        }
     }
 
+     private fun loadModel(modelName: String) {
+         arSceneView.planeRenderer.isVisible = false
+         arSceneView.lightEstimationMode = Config.LightEstimationMode.DISABLED
+         arSceneView.planeRenderer.isShadowReceiver = false
+         if (!::modelNode.isInitialized) {
+             modelNode = ArModelNode(arSceneView.engine, PlacementMode.INSTANT).apply {
+                 isVisible = true
+             }
+             arSceneView.addChild(modelNode)
+         }
 
-    LaunchedEffect(key1 = model){
-        modelNode.value?.loadModelGlbAsync(
-            glbFileLocation = "models/${model}.glb",
-            scaleToUnits = 0.8f
-        )
-        Log.e("errorloading","ERROR LOADING MODEL")
-    }
+         modelNode.loadModelGlbAsync(
+             glbFileLocation = modelName,
+             scaleToUnits = 1f,
+             centerOrigin = null
+
+         )
+         arSceneView.addChild(modelNode)
+     }
 
 }
 
-
-data class Food(var name:String,var imageId:Int)
 
 
 

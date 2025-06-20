@@ -37,6 +37,9 @@ android {
     }
     buildFeatures {
         compose=true
+        dataBinding{
+            dataBinding=true
+        }
     }
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
@@ -68,6 +71,7 @@ dependencies {
     implementation(libs.media3.exoplayer)
     implementation(libs.scenecore)
     implementation(libs.runtime.android)
+    implementation(libs.androidx.camera.view)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

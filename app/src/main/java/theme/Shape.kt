@@ -1,4 +1,4 @@
-package com.example.mycloset;
+package theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

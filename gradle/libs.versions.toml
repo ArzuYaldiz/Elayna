@@ -66,6 +66,7 @@ ui = "1.8.2"
 uiVersion = "compose_ui_version"
 kotlin = "2.0.21"
 composeCompiler = "2.0.0"
+cameraView = "1.4.2"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
@@ -144,6 +145,7 @@ media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", versi
 support-compat = { module = "com.android.support:support-compat", version.ref = "supportCompat" }
 ux = { module = "com.google.ar.sceneform:ux", version.ref = "filamentAndroid" }
 runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
+androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "cameraView" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

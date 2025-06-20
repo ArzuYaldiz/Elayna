@@ -1,0 +1,137 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- AR SceneView (Camera View) -->
+    <io.github.sceneview.ar.ArSceneView
+        android:id="@+id/cameraView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"/>
+
+    <!-- Menu Overlay on the Right -->
+    <LinearLayout
+        android:id="@+id/menuLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="8dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="top"
+            tools:ignore="UselessParent">
+
+            <Button
+                android:id="@+id/btn_winter"
+                android:layout_width="105dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/square_button"
+                android:text="@string/winter"/>
+            <Button
+                android:id="@+id/btn_summer"
+                android:layout_width="105dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/square_button"
+                android:text="Summer"/>
+        </LinearLayout>
+
+        <!-- Kategori butonları -->
+        <HorizontalScrollView
+            android:layout_width="210dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/btn_all"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/square_button"
+                    android:text="@string/all"/>
+
+                <Button
+                    android:id="@+id/btn_top"
+                    android:layout_width="105dp"
+                    android:background="@drawable/square_button"
+                    android:layout_height="wrap_content"
+                    android:text="@string/top"/>
+                <Button
+                    android:id="@+id/btn_bottom"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/square_button"
+                    android:text="@string/bottom" />
+
+                <Button
+                    android:id="@+id/btn_shoe"
+                    android:layout_width="120dp"
+                    android:background="@drawable/square_button"
+                    android:layout_height="wrap_content"
+                    android:text="@string/shoe"/>
+
+                <Button
+                    android:id="@+id/btn_accessory"
+                    android:layout_width="120dp"
+                    android:background="@drawable/square_button"
+                    android:layout_height="wrap_content"
+                    android:text="@string/accessory"/>
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
+
+        <!-- Kıyafetlerin listeleneceği alan (RecyclerView) -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_clothes"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false">
+
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_margin="12dp">
+
+        <ImageButton
+            android:id="@+id/btn_back"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@android:drawable/ic_media_previous"
+            android:background="@android:color/transparent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <ImageButton
+            android:id="@+id/btn_favourite"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@android:drawable/btn_star"
+            android:background="@android:color/transparent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btn_back"/>
+    </LinearLayout>
+
+
+
+
+</RelativeLayout>
