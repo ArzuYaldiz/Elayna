@@ -100,9 +100,15 @@
             android:layout_height="match_parent"
             android:clipToPadding="false">
 
-
         </androidx.recyclerview.widget.RecyclerView>
 
+        <Button
+            android:id="@+id/placeButton"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="-100dp"
+            android:layout_gravity="center"
+            android:text="@string/place_clothing"/>
 
     </LinearLayout>
 

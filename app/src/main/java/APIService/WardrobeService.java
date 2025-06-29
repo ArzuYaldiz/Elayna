@@ -1,12 +1,19 @@
 package APIService;
 
+import android.net.Uri;
+
 import com.example.mycloset.dataClasses.ClothUploadDto;
 import com.example.mycloset.dataClasses.RegisterResponseDto;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -18,5 +25,17 @@ public interface WardrobeService {
     @GET("/wardrobe/{TASK_ID}")
     Call<RegisterResponseDto> GetObjFromMeshy(@Path("TASK_ID") String taskId, @Query("user_id") int userId);
 
+    @POST("/cloth-id")
+    Call<Integer> getNewClothId();
+    @Multipart
+    @POST("/upload-cloth")
+    Call<RegisterResponseDto> uploadCloth(
+            @Part MultipartBody.Part file,
+            @Part("season") RequestBody season,
+            @Part("section") RequestBody section,
+            @Part("category") RequestBody category,
+            @Part("imageUrl") RequestBody imageUri,
+            @Part("userId") RequestBody userId
+    );
 
 }

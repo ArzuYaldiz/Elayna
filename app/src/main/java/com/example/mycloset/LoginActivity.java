@@ -70,8 +70,8 @@ public class LoginActivity extends AppCompatActivity {
         memberSignIn();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.147.3:8080/")
-                //.baseUrl("http://10.0.2.2:8080/")
+                //.baseUrl("http://192.168.135.3:8080/")
+                .baseUrl("http://10.0.2.2:8080/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

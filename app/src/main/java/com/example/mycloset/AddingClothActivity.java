@@ -5,8 +5,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -16,6 +20,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.mycloset.dataClasses.ClothUploadDto;
 import com.example.mycloset.dataClasses.RegisterResponseDto;
 import com.github.dhaval2404.imagepicker.ImagePicker;
+import com.google.firebase.appcheck.FirebaseAppCheck;
+import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
@@ -34,7 +40,10 @@ import Utils.AndroidUtil;
 import Utils.FirebaseUtil;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -49,6 +58,11 @@ public class AddingClothActivity extends AppCompatActivity {
     private ImageView clothImage;
     private Button uploadButton;
 
+    Spinner seasonSpinner;
+    Spinner sectionSpinner;
+    Spinner categorySpinner;
+
+    int cloth_id;
     private Button okayButton;
     private String image_url;
 
@@ -58,6 +72,52 @@ public class AddingClothActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adding_cloth);
+
+        FirebaseAppCheck firebaseAppCheck = FirebaseAppCheck.getInstance();
+        firebaseAppCheck.installAppCheckProviderFactory(
+                PlayIntegrityAppCheckProviderFactory.getInstance()
+        );
+        Log.d("AppCheckInit", "Firebase App Check initialized with DebugProvider using provided secret");
+
+        String user_id = getSharedPreferences("myClosetPrefs", MODE_PRIVATE)
+                .getString("userId", null);
+        intUserId = Integer.parseInt(user_id);
+
+        findViews();
+
+        ArrayAdapter<String> seasonAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new String[]{"Summer", "Winter"});
+        seasonAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        seasonSpinner.setAdapter(seasonAdapter);
+
+        ArrayAdapter<String> sectionAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new String[]{"Top", "Bottom"});
+        sectionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sectionSpinner.setAdapter(sectionAdapter);
+        sectionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                updateCategorySpinner();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) { }
+        });
+
+        seasonSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                updateCategorySpinner();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) { }
+        });
+        uploadButton.setOnClickListener(v -> {
+            if (selectedClothUri == null) {
+                Toast.makeText(this, "Lütfen görsel seçiniz", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+        });
 
         imagePickLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -70,7 +130,6 @@ public class AddingClothActivity extends AppCompatActivity {
                     }
                 });
 
-        findViews();
 
         clothImage.setOnClickListener((v)->{
             ImagePicker.with(this).cropSquare().compress(1080).maxResultSize(1080,1080)
@@ -90,8 +149,8 @@ public class AddingClothActivity extends AppCompatActivity {
                 .build();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.170.3:8080/")
-                //.baseUrl("http://10.0.2.2:8080/")
+                //.baseUrl("http://192.168.170.3:8080/")
+                .baseUrl("http://10.0.2.2:8080/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -100,10 +159,38 @@ public class AddingClothActivity extends AppCompatActivity {
         okayButton.setOnClickListener(v-> getImageObj(wardrobeService));
     }
 
+    private void updateCategorySpinner() {
+        String season = seasonSpinner.getSelectedItem().toString().toLowerCase();
+        String section = sectionSpinner.getSelectedItem().toString().toLowerCase();
+
+        String[] categories;
+
+        if (season.equals("summer") && section.equals("top")) {
+            categories = new String[]{"BLOUSE", "DRESS", "JACKET", "SUIT", "T-shirt"};
+        } else if (season.equals("summer") && section.equals("bottom")) {
+            categories = new String[]{"SKIRT", "PANTS", "SHORT"};
+        } else if (season.equals("winter") && section.equals("top")) {
+            categories = new String[]{"COAT", "SWEATSHIRT", "WINTERJACKET"};
+        } else if (season.equals("winter") && section.equals("bottom")){
+            categories = new String[]{"PANTS", "LEGGINGS", "SKIRTS"};
+        } else{
+            categories = new String[]{"AAA"};
+        }
+
+        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        categorySpinner.setAdapter(categoryAdapter);
+    }
+
+
     private void findViews(){
         clothImage = findViewById(R.id.cloth_img);
         uploadButton = findViewById(R.id.upload_cloth_button);
         okayButton = findViewById(R.id.okay_cloth_button);
+        seasonSpinner = findViewById(R.id.season_spinner);
+        sectionSpinner = findViewById(R.id.section_spinner);
+        categorySpinner = findViewById(R.id.category_spinner);
+
     }
 
     private void uploadImageGetObj(WardrobeService wardrobeService){
@@ -117,9 +204,80 @@ public class AddingClothActivity extends AppCompatActivity {
         }
 
         if(selectedClothUri != null) {
-            FirebaseUtil.getWardrobeItemStorageRef(user_id).putFile(selectedClothUri)
+
+            // Spinner seçimlerini al
+            String season = seasonSpinner.getSelectedItem().toString();
+            String section = sectionSpinner.getSelectedItem().toString();
+            String category = categorySpinner.getSelectedItem().toString();
+
+            Call<Integer> id = wardrobeService.getNewClothId();
+            id.enqueue(new Callback<Integer>() {
+
+                @Override
+                public void onResponse(Call<Integer> call, Response<Integer> response) {
+                    if(response.body() != null && response.isSuccessful())
+                        cloth_id = response.body();
+
+                }
+
+                @Override
+                public void onFailure(Call<Integer> call, Throwable t) {
+
+                }
+            });
+            // Seçilen görseli dosyaya çevir
+            File file = null;
+            try {
+                InputStream inputStream = getContentResolver().openInputStream(selectedClothUri);
+                file = new File(getCacheDir(), "upload.jpg");
+                FileOutputStream outputStream = new FileOutputStream(file);
+                byte[] buffer = new byte[1024];
+                int len;
+                while ((len = inputStream.read(buffer)) > 0) {
+                    outputStream.write(buffer, 0, len);
+                }
+                outputStream.close();
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Dosya okunamadı", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            RequestBody requestFile = RequestBody.create(file, okhttp3.MediaType.parse("image/*"));
+            MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+            RequestBody seasonPart = RequestBody.create(season, MultipartBody.FORM);
+            RequestBody sectionPart = RequestBody.create(section, MultipartBody.FORM);
+            RequestBody categoryPart = RequestBody.create(category, MultipartBody.FORM);
+
+            RequestBody imageUriPart = RequestBody.create(
+                    selectedClothUri.toString(), MultipartBody.FORM);
+
+            RequestBody userIdPart = RequestBody.create(
+                    String.valueOf(intUserId), MultipartBody.FORM);
+            Call<RegisterResponseDto> call = wardrobeService.uploadCloth(filePart, seasonPart, sectionPart, categoryPart, imageUriPart ,userIdPart);
+            call.enqueue(new Callback<RegisterResponseDto>() {
+
+                @Override
+                public void onResponse(Call<RegisterResponseDto> call, Response<RegisterResponseDto> response) {
+                    if (response.isSuccessful()) {
+                        cloth_id = response.body().getId();
+                        Toast.makeText(AddingClothActivity.this, "Yükleme başarılı 🎉", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(AddingClothActivity.this, "Yükleme başarısız 😢", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<RegisterResponseDto> call, Throwable t) {
+                    Toast.makeText(AddingClothActivity.this, "Hata: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            });
+
+            FirebaseUtil.getWardrobeItemStorageRef(user_id, seasonSpinner, sectionSpinner, categorySpinner, cloth_id).putFile(selectedClothUri)
                     .addOnSuccessListener(task ->{
-                        StorageReference clothPicRef = FirebaseUtil.getWardrobeItemStorageRef(user_id);
+                        StorageReference clothPicRef = FirebaseUtil.getWardrobeItemStorageRef(user_id, seasonSpinner, sectionSpinner, categorySpinner, cloth_id);
 
                         clothPicRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
 
@@ -132,9 +290,9 @@ public class AddingClothActivity extends AppCompatActivity {
 
                             Log.d("AAAAAAAAAAAAAAAA", clothUploadDto.getImage_url());
 
-                            Call<RegisterResponseDto> call = wardrobeService.imageTo3d(clothUploadDto);
+                            Call<RegisterResponseDto> call1 = wardrobeService.imageTo3d(clothUploadDto);
 
-                            call.enqueue(new Callback<RegisterResponseDto>() {
+                            call1.enqueue(new Callback<RegisterResponseDto>() {
                                 @Override
                                 public void onResponse(Call<RegisterResponseDto> call, Response<RegisterResponseDto> response) {
 
@@ -143,12 +301,15 @@ public class AddingClothActivity extends AppCompatActivity {
                                         RegisterResponseDto res = response.body();
                                         Toast.makeText(AddingClothActivity.this, "Image Uploaded successfully", Toast.LENGTH_LONG).show();
 
+
+
+
                                         System.out.println(res.getStatus());
                                         Log.d("Update Activity", res.getBody());
 
                                         TASK_ID = res.getBody().trim();
 
-                                        getImageObj(wardrobeService);
+                                        //getImageObj(wardrobeService);
 
                                     } else {
                                         try {
@@ -182,8 +343,6 @@ public class AddingClothActivity extends AppCompatActivity {
                     .addOnFailureListener(e -> {
                         Toast.makeText(this, "Failed to upload image "+ null, Toast.LENGTH_SHORT).show();
                     });
-
-
         }else{
             Toast.makeText(AddingClothActivity.this, "Error: Image Couldn't uploaded" , Toast.LENGTH_LONG).show();
         }
@@ -221,7 +380,7 @@ public class AddingClothActivity extends AppCompatActivity {
                                             Uri localUri = Uri.fromFile(localFile);
 
                                             runOnUiThread(() -> {
-                                                FirebaseUtil.getWardrobeGlbStorageRef(user_id).putFile(localUri)
+                                                FirebaseUtil.getWardrobeGlbStorageRef(user_id, seasonSpinner, sectionSpinner, categorySpinner,cloth_id).putFile(localUri)
                                                         .addOnCompleteListener(task -> {
                                                             if (task.isSuccessful()) {
                                                                 Toast.makeText(AddingClothActivity.this, "Obj added successfully", Toast.LENGTH_LONG).show();
@@ -253,8 +412,8 @@ public class AddingClothActivity extends AppCompatActivity {
                 }
             }
         };
-
-        scheduler.scheduleAtFixedRate(pollTask, 3, 10, TimeUnit.SECONDS);
+        // scheduler.scheduleAtFixedRate(pollTask, 3, 10, TimeUnit.SECONDS);
+        scheduler.scheduleWithFixedDelay(pollTask, 3, 10, TimeUnit.SECONDS);
     }
 
     private File downloadFile(String urlStr, String filename) throws IOException {
@@ -273,4 +432,5 @@ public class AddingClothActivity extends AppCompatActivity {
         }
         return file;
     }
+
 }

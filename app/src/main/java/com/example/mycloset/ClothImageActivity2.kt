@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Layout.Alignment
 import android.util.Log
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Toast
@@ -17,8 +18,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.xr.runtime.math.Vector3
 import com.google.ar.core.Config
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import dev.romainguy.kotlin.math.Float3
 import io.github.sceneview.ar.ArSceneView
 import io.github.sceneview.ar.node.ArModelNode
 import io.github.sceneview.ar.node.PlacementMode
@@ -30,6 +34,7 @@ class ClothImageActivity2 : ComponentActivity() {
 
     private lateinit var arSceneView: ArSceneView
     private lateinit var modelNode: ArModelNode
+    private val modelNodes = mutableListOf<ArModelNode>()
 
     private lateinit var recyclerView: RecyclerView;
     private var user_id: String? = null
@@ -40,6 +45,7 @@ class ClothImageActivity2 : ComponentActivity() {
     private var clothList = mutableListOf<clothsJpg>()
     private var modelList = mutableListOf<clothsGlb>()
 
+    private lateinit var clothButton: Button
 
     private var currentIndex = 0
 
@@ -55,13 +61,14 @@ class ClothImageActivity2 : ComponentActivity() {
             setupCameraAndAR()
         }
 
+
         //setupARScene()
     }
-
     private fun setupCameraAndAR() {
         arSceneView = findViewById(R.id.cameraView)
         recyclerView = findViewById(R.id.recycler_clothes)
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        clothButton = findViewById(R.id.placeButton)
 
         user_id = getSharedPreferences("myClosetPrefs", MODE_PRIVATE)
             .getString("userId", null)
@@ -69,18 +76,19 @@ class ClothImageActivity2 : ComponentActivity() {
         val storageRef = FirebaseStorage.getInstance().reference.child("Wardrobe/$user_id")
 
         // Initialize adapter ONCE with an empty list
-        val adapter = CustomAdapter(clothList) { cloth ->
-            // Only load model when button is clicked
-            val modelRef = FirebaseUtil.getWardrobeGlbStorageRef(user_id)
 
-            Log.d("GLB_DOWNLOAD", "Model URL: $modelRef")
-            modelRef.downloadUrl.addOnSuccessListener { uri ->
-                loadModel(uri.toString())
-            }.addOnFailureListener {
-                Log.e("GLB_DOWNLOAD", "Failed to download model for ${cloth.clothname}", it)
-                Toast.makeText(this, "Model not found", Toast.LENGTH_SHORT).show()
-            }
-        }
+       var adapter = CustomAdapter(clothList) { cloth ->
+            // Only load model when button is clicked
+           val matchingModel = modelList.find { it.modelname == cloth.clothname }
+
+           if (matchingModel != null) {
+               Log.d("GLB_DOWNLOAD", "Loading model for: ${matchingModel.modelname}")
+               loadModel(matchingModel.modelname, matchingModel.modelId)
+           } else {
+               Toast.makeText(this, "Model not found for ${cloth.clothname}", Toast.LENGTH_SHORT).show()
+           }
+
+       }
 
         recyclerView.adapter = adapter
 
@@ -95,6 +103,13 @@ class ClothImageActivity2 : ComponentActivity() {
                             adapter.notifyItemInserted(clothList.size - 1)
                         }
                     }
+                    else if (item.name.endsWith(".glb")){
+                        item.downloadUrl.addOnSuccessListener { uri ->
+                            val name = item.name.removeSuffix(".glb")
+                            val model = clothsGlb(name, uri)
+                            modelList.add(model)
+                        }
+                    }
                 }
             }
             .addOnFailureListener { exception ->
@@ -102,25 +117,36 @@ class ClothImageActivity2 : ComponentActivity() {
             }
     }
 
-     private fun loadModel(modelName: String) {
+     private fun loadModel(modelRef: String, modelUri: Uri) {
+
          arSceneView.planeRenderer.isVisible = false
          arSceneView.lightEstimationMode = Config.LightEstimationMode.DISABLED
          arSceneView.planeRenderer.isShadowReceiver = false
-         if (!::modelNode.isInitialized) {
-             modelNode = ArModelNode(arSceneView.engine, PlacementMode.INSTANT).apply {
-                 isVisible = true
-             }
-             arSceneView.addChild(modelNode)
+
+         val newNode = ArModelNode(arSceneView.engine, PlacementMode.INSTANT).apply {
+             isVisible = true
+
+             loadModelGlbAsync(
+                 glbFileLocation = modelUri.toString(),
+                 centerOrigin = null
+             )
+             scale = Float3(0.6f)
+
+         }
+         modelNodes.add(newNode)
+         arSceneView.addChild(newNode)
+
+         clothButton.setOnClickListener {
+             newNode.anchor()
          }
 
-         modelNode.loadModelGlbAsync(
-             glbFileLocation = modelName,
-             scaleToUnits = 1f,
-             centerOrigin = null
+         //burada kategoriyr bak eğer aynı kategoriyse modelNodeu kaldır eğer farklıysa ekleee
+         //modelNodes a bak eklenen modellerin ismi var mı oradaa
 
-         )
-         arSceneView.addChild(modelNode)
+         val name = modelRef
+         val model = clothsGlb(name, modelUri)
      }
+
 
 }
 
