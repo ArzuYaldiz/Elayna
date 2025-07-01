@@ -52,7 +52,7 @@ composeCompiler {
 }
 
 dependencies {
-
+    implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
     implementation(platform("androidx.compose:compose-bom:2024.06.00"))
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -72,10 +72,7 @@ dependencies {
     implementation(libs.scenecore)
     implementation(libs.runtime.android)
     implementation(libs.androidx.camera.view)
-
     testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
     // Retrofit for network requests
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
@@ -90,9 +87,6 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     /////,
     implementation (libs.core.ktx)
-    //implementation(libs.sceneform.ux)
-    //implementation(libs.sceneform)
-    //implementation(libs.sceneview.v230)
 
     implementation (libs.androidx.core.ktx.v170)
     implementation (libs.androidx.lifecycle.runtime.ktx)

@@ -23,6 +23,8 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.appcheck.FirebaseAppCheck;
 import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory;
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.Firebase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -55,14 +57,26 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        FirebaseApp.initializeApp(/*context=*/ this);
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
-        // Get the FirebaseAppCheck instance
-        FirebaseAppCheck firebaseAppCheck = FirebaseAppCheck.getInstance();
-        firebaseAppCheck.installAppCheckProviderFactory(
-                PlayIntegrityAppCheckProviderFactory.getInstance()
-        );
-        Log.d("AppCheckInit", "Firebase App Check initialized with DebugProvider using provided secret");
+        if (mAuth.getCurrentUser() == null) {
+            mAuth.signInAnonymously()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Log.d("Auth", "Signed in anonymously");
+                            FirebaseUser user = mAuth.getCurrentUser();
+
+                            // Now the user has a valid auth token
+                            // You can now safely access Firebase Storage
+                        } else {
+                            Log.e("Auth", "Sign-in failed", task.getException());
+                        }
+                    });
+        } else {
+            Log.d("Auth", "Already signed in");
+        }
+
+
 
         findViews();
         signup();
@@ -70,8 +84,8 @@ public class LoginActivity extends AppCompatActivity {
         memberSignIn();
 
         Retrofit retrofit = new Retrofit.Builder()
-                //.baseUrl("http://192.168.135.3:8080/")
-                .baseUrl("http://10.0.2.2:8080/")
+                .baseUrl("http://192.168.135.3:8080/")
+                //.baseUrl("http://10.0.2.2:8080/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

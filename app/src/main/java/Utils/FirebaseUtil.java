@@ -43,11 +43,11 @@ public class FirebaseUtil {
         Glide.with(context).load(imageUri).apply(RequestOptions.circleCropTransform()).into(imageView);
     }
 
-    public static StorageReference getWardrobeItemStorageRef(String user_id, Spinner seasonSpinner, Spinner sectionSpinner, Spinner categorySpinner, int cloth_id){
+    public static StorageReference getWardrobeItemStorageRef(String user_id, String seasonSpinner, String sectionSpinner, String categorySpinner, String cloth_id){
 
-
+        Log.d("CLOTH_ID FIREBASE:", String.valueOf(cloth_id));
         return FirebaseStorage.getInstance().getReference().child("Wardrobe").child(user_id)
-                    .child(String.format("wardrobe_item_%s_%s_%s_%d.jpg",seasonSpinner,sectionSpinner,categorySpinner, cloth_id));
+                    .child(String.format("wardrobe_item_%s_%s_%s_%s.jpg",cloth_id, seasonSpinner,sectionSpinner,categorySpinner));
 
 
     }
@@ -62,9 +62,9 @@ public class FirebaseUtil {
         Glide.with(context).load(imageUri).apply(RequestOptions.noTransformation()).into(imageButton);
     }
 
-    public static StorageReference getWardrobeGlbStorageRef(String user_id, Spinner seasonSpinner, Spinner sectionSpinner, Spinner categorySpinner, int cloth_id){
+    public static StorageReference getWardrobeGlbStorageRef(String user_id, String seasonSpinner, String sectionSpinner, String categorySpinner, String cloth_id){
         return FirebaseStorage.getInstance().getReference().child("Wardrobe").child(user_id)
-                .child(String.format("wardrobe_item_%s%s%s%d.glb",seasonSpinner,sectionSpinner,categorySpinner, cloth_id));
+                .child(String.format("wardrobe_item_%s_%s_%s_%s.jpg",cloth_id, seasonSpinner,sectionSpinner,categorySpinner));
 
     }
 

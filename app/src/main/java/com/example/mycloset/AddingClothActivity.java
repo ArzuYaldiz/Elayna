@@ -63,6 +63,7 @@ public class AddingClothActivity extends AppCompatActivity {
     Spinner categorySpinner;
 
     int cloth_id;
+    String cloth_id_string;
     private Button okayButton;
     private String image_url;
 
@@ -73,10 +74,6 @@ public class AddingClothActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adding_cloth);
 
-        FirebaseAppCheck firebaseAppCheck = FirebaseAppCheck.getInstance();
-        firebaseAppCheck.installAppCheckProviderFactory(
-                PlayIntegrityAppCheckProviderFactory.getInstance()
-        );
         Log.d("AppCheckInit", "Firebase App Check initialized with DebugProvider using provided secret");
 
         String user_id = getSharedPreferences("myClosetPrefs", MODE_PRIVATE)
@@ -132,7 +129,7 @@ public class AddingClothActivity extends AppCompatActivity {
 
 
         clothImage.setOnClickListener((v)->{
-            ImagePicker.with(this).cropSquare().compress(1080).maxResultSize(1080,1080)
+            ImagePicker.with(this).crop().compress(1080).maxResultSize(1080,1080)
                     .createIntent(new Function1<Intent, Unit>() {
                         @Override
                         public Unit invoke(Intent intent) {
@@ -149,14 +146,19 @@ public class AddingClothActivity extends AppCompatActivity {
                 .build();
 
         Retrofit retrofit = new Retrofit.Builder()
-                //.baseUrl("http://192.168.170.3:8080/")
-                .baseUrl("http://10.0.2.2:8080/")
+                .baseUrl("http://192.168.135.3:8080/")
+                //.baseUrl("http://10.0.2.2:8080/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         WardrobeService wardrobeService = retrofit.create(WardrobeService.class);
         uploadButton.setOnClickListener(v-> uploadImageGetObj(wardrobeService));
-        okayButton.setOnClickListener(v-> getImageObj(wardrobeService));
+        okayButton.setOnClickListener(v-> toTheMainMenu());
+    }
+
+    private void toTheMainMenu(){
+        Intent i = new Intent(getApplicationContext(),ClothImageActivity2.class);
+        startActivity(i);
     }
 
     private void updateCategorySpinner() {
@@ -166,13 +168,13 @@ public class AddingClothActivity extends AppCompatActivity {
         String[] categories;
 
         if (season.equals("summer") && section.equals("top")) {
-            categories = new String[]{"BLOUSE", "DRESS", "JACKET", "SUIT", "T-shirt"};
+            categories = new String[]{"BLOUSE", "DRESS", "JACKET", "SUIT", "TSHIRT"};
         } else if (season.equals("summer") && section.equals("bottom")) {
             categories = new String[]{"SKIRT", "PANTS", "SHORT"};
         } else if (season.equals("winter") && section.equals("top")) {
             categories = new String[]{"COAT", "SWEATSHIRT", "WINTERJACKET"};
         } else if (season.equals("winter") && section.equals("bottom")){
-            categories = new String[]{"PANTS", "LEGGINGS", "SKIRTS"};
+            categories = new String[]{"PANTS", "LEGGINGS", "SKIRT"};
         } else{
             categories = new String[]{"AAA"};
         }
@@ -210,22 +212,6 @@ public class AddingClothActivity extends AppCompatActivity {
             String section = sectionSpinner.getSelectedItem().toString();
             String category = categorySpinner.getSelectedItem().toString();
 
-            Call<Integer> id = wardrobeService.getNewClothId();
-            id.enqueue(new Callback<Integer>() {
-
-                @Override
-                public void onResponse(Call<Integer> call, Response<Integer> response) {
-                    if(response.body() != null && response.isSuccessful())
-                        cloth_id = response.body();
-
-                }
-
-                @Override
-                public void onFailure(Call<Integer> call, Throwable t) {
-
-                }
-            });
-            // Seçilen görseli dosyaya çevir
             File file = null;
             try {
                 InputStream inputStream = getContentResolver().openInputStream(selectedClothUri);
@@ -250,106 +236,131 @@ public class AddingClothActivity extends AppCompatActivity {
             RequestBody sectionPart = RequestBody.create(section, MultipartBody.FORM);
             RequestBody categoryPart = RequestBody.create(category, MultipartBody.FORM);
 
-            RequestBody imageUriPart = RequestBody.create(
-                    selectedClothUri.toString(), MultipartBody.FORM);
-
             RequestBody userIdPart = RequestBody.create(
                     String.valueOf(intUserId), MultipartBody.FORM);
-            Call<RegisterResponseDto> call = wardrobeService.uploadCloth(filePart, seasonPart, sectionPart, categoryPart, imageUriPart ,userIdPart);
-            call.enqueue(new Callback<RegisterResponseDto>() {
+
+
+            Call<Integer> id = wardrobeService.getNewClothId();
+            id.enqueue(new Callback<Integer>() {
 
                 @Override
-                public void onResponse(Call<RegisterResponseDto> call, Response<RegisterResponseDto> response) {
-                    if (response.isSuccessful()) {
-                        cloth_id = response.body().getId();
-                        Toast.makeText(AddingClothActivity.this, "Yükleme başarılı 🎉", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(AddingClothActivity.this, "Yükleme başarısız 😢", Toast.LENGTH_SHORT).show();
+                public void onResponse(Call<Integer> call_id, Response<Integer> response) {
+                    if(response.body() != null && response.isSuccessful())
+                        cloth_id = response.body();
+                    if(cloth_id<10){
+                        cloth_id_string = "0"+ String.valueOf(cloth_id);
                     }
-                }
 
-                @Override
-                public void onFailure(Call<RegisterResponseDto> call, Throwable t) {
-                    Toast.makeText(AddingClothActivity.this, "Hata: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                }
+                    Log.d("CLOTH_ID:", String.valueOf(cloth_id));
 
-            });
+                    FirebaseUtil.getWardrobeItemStorageRef(user_id, season, section, category, cloth_id_string).putFile(selectedClothUri)
+                            .addOnCompleteListener(task ->{
+                                Log.d("CLOTH_ID:", String.valueOf(cloth_id));
+                                StorageReference clothPicRef = task.getResult().getMetadata().getReference();
 
-            FirebaseUtil.getWardrobeItemStorageRef(user_id, seasonSpinner, sectionSpinner, categorySpinner, cloth_id).putFile(selectedClothUri)
-                    .addOnSuccessListener(task ->{
-                        StorageReference clothPicRef = FirebaseUtil.getWardrobeItemStorageRef(user_id, seasonSpinner, sectionSpinner, categorySpinner, cloth_id);
+                                clothPicRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
 
-                        clothPicRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
+                                    image_url = downloadUri.toString();
 
-                            image_url = downloadUri.toString();
+                                    RequestBody imageUriPart = RequestBody.create(
+                                            image_url, MultipartBody.FORM);
 
-                            Log.d("AAAAAAAAAAAAAAAA", user_id);
+                                    Call<RegisterResponseDto> call = wardrobeService.uploadCloth(filePart, seasonPart, sectionPart, categoryPart, imageUriPart ,userIdPart);
+                                    call.enqueue(new Callback<RegisterResponseDto>() {
 
-
-                            ClothUploadDto clothUploadDto = new ClothUploadDto(intUserId, image_url);
-
-                            Log.d("AAAAAAAAAAAAAAAA", clothUploadDto.getImage_url());
-
-                            Call<RegisterResponseDto> call1 = wardrobeService.imageTo3d(clothUploadDto);
-
-                            call1.enqueue(new Callback<RegisterResponseDto>() {
-                                @Override
-                                public void onResponse(Call<RegisterResponseDto> call, Response<RegisterResponseDto> response) {
-
-                                    if (response.body() != null && response.isSuccessful()) {
-
-                                        RegisterResponseDto res = response.body();
-                                        Toast.makeText(AddingClothActivity.this, "Image Uploaded successfully", Toast.LENGTH_LONG).show();
-
-
-
-
-                                        System.out.println(res.getStatus());
-                                        Log.d("Update Activity", res.getBody());
-
-                                        TASK_ID = res.getBody().trim();
-
-                                        //getImageObj(wardrobeService);
-
-                                    } else {
-                                        try {
-                                            if (response.errorBody() != null) {
-                                                Toast.makeText(AddingClothActivity.this, "Please try again", Toast.LENGTH_LONG).show();
+                                        @Override
+                                        public void onResponse(Call<RegisterResponseDto> call, Response<RegisterResponseDto> response) {
+                                            if (response.isSuccessful()) {
+                                                cloth_id = response.body().getId();
+                                                Toast.makeText(AddingClothActivity.this, "Yükleme başarılı 🎉", Toast.LENGTH_SHORT).show();
                                             } else {
-                                                Toast.makeText(AddingClothActivity.this, "Please try again", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(AddingClothActivity.this, "Yükleme başarısız 😢", Toast.LENGTH_SHORT).show();
                                             }
-
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                            Toast.makeText(AddingClothActivity.this, "Unknown Error", Toast.LENGTH_LONG).show();
-
                                         }
 
-                                    }
-                                }
+                                        @Override
+                                        public void onFailure(Call<RegisterResponseDto> call, Throwable t) {
+                                            Toast.makeText(AddingClothActivity.this, "Hata: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
 
-                                @Override
-                                public void onFailure(Call<RegisterResponseDto> call, Throwable t) {
-                                    Toast.makeText(AddingClothActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-                                    Log.d("ImageUpdate ", t.getMessage());
-                                }
+                                    });
 
+                                    Log.d("AAAAAAAAAAAAAAAA", user_id);
+
+
+                                    ClothUploadDto clothUploadDto = new ClothUploadDto(intUserId, image_url);
+
+                                    Log.d("AAAAAAAAAAAAAAAA", clothUploadDto.getImage_url());
+
+                                    Call<RegisterResponseDto> call1 = wardrobeService.imageTo3d(clothUploadDto);
+
+                                    call1.enqueue(new Callback<RegisterResponseDto>() {
+                                        @Override
+                                        public void onResponse(Call<RegisterResponseDto> call, Response<RegisterResponseDto> response) {
+
+                                            if (response.body() != null && response.isSuccessful()) {
+
+                                                RegisterResponseDto res = response.body();
+                                                Toast.makeText(AddingClothActivity.this, "Image Uploaded successfully", Toast.LENGTH_LONG).show();
+
+                                                System.out.println(res.getStatus());
+                                                Log.d("Update Activity", res.getBody());
+
+                                                TASK_ID = res.getBody().trim();
+
+                                                getImageObj(wardrobeService,season, section, category, cloth_id);
+
+                                            } else {
+                                                try {
+                                                    if (response.errorBody() != null) {
+                                                        Toast.makeText(AddingClothActivity.this, "Please try again", Toast.LENGTH_LONG).show();
+                                                    } else {
+                                                        Toast.makeText(AddingClothActivity.this, "Please try again", Toast.LENGTH_LONG).show();
+                                                    }
+
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                    Toast.makeText(AddingClothActivity.this, "Unknown Error", Toast.LENGTH_LONG).show();
+
+                                                }
+
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<RegisterResponseDto> call, Throwable t) {
+                                            Toast.makeText(AddingClothActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                                            Log.d("ImageUpdate ", t.getMessage());
+                                        }
+
+                                    });
+
+
+                                });
+
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e("Failed to upload image ", e.toString());
                             });
 
+                }
 
-                        });
+                @Override
+                public void onFailure(Call<Integer> call, Throwable t) {
 
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(this, "Failed to upload image "+ null, Toast.LENGTH_SHORT).show();
-                    });
+                }
+            });
+            // Seçilen görseli dosyaya çevir
+
+
+
         }else{
             Toast.makeText(AddingClothActivity.this, "Error: Image Couldn't uploaded" , Toast.LENGTH_LONG).show();
         }
 
     }
 
-    private void getImageObj(WardrobeService wardrobeService){
+    private void getImageObj(WardrobeService wardrobeService, String season, String section, String category, int cloth_id){
         String user_id = getSharedPreferences("myClosetPrefs", MODE_PRIVATE).getString("userId", null);
 
         if (user_id != null) {
@@ -380,7 +391,7 @@ public class AddingClothActivity extends AppCompatActivity {
                                             Uri localUri = Uri.fromFile(localFile);
 
                                             runOnUiThread(() -> {
-                                                FirebaseUtil.getWardrobeGlbStorageRef(user_id, seasonSpinner, sectionSpinner, categorySpinner,cloth_id).putFile(localUri)
+                                                FirebaseUtil.getWardrobeGlbStorageRef(user_id, season, section, category, cloth_id_string).putFile(localUri)
                                                         .addOnCompleteListener(task -> {
                                                             if (task.isSuccessful()) {
                                                                 Toast.makeText(AddingClothActivity.this, "Obj added successfully", Toast.LENGTH_LONG).show();
@@ -412,8 +423,8 @@ public class AddingClothActivity extends AppCompatActivity {
                 }
             }
         };
-        // scheduler.scheduleAtFixedRate(pollTask, 3, 10, TimeUnit.SECONDS);
-        scheduler.scheduleWithFixedDelay(pollTask, 3, 10, TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(pollTask, 10, 10, TimeUnit.SECONDS);
+        //scheduler.scheduleWithFixedDelay(pollTask, 10, 10, TimeUnit.SECONDS);
     }
 
     private File downloadFile(String urlStr, String filename) throws IOException {

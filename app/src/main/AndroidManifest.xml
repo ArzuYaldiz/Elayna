@@ -79,13 +79,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MainPageActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.INFO" />
-            </intent-filter>
-        </activity>
+
 
         <activity android:name=".AddingClothActivity"
             android:exported="true">

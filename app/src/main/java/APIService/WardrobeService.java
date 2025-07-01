@@ -2,8 +2,11 @@ package APIService;
 
 import android.net.Uri;
 
+import com.example.mycloset.dataClasses.ClothRequestDto;
 import com.example.mycloset.dataClasses.ClothUploadDto;
 import com.example.mycloset.dataClasses.RegisterResponseDto;
+
+import java.util.List;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -37,5 +40,8 @@ public interface WardrobeService {
             @Part("imageUrl") RequestBody imageUri,
             @Part("userId") RequestBody userId
     );
+
+    @POST("/cloth-type")
+    Call <List<ClothRequestDto>> getClothType(@Query("user_id") int userId);
 
 }

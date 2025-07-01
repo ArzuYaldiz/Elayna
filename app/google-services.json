@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "397389714278",
-    "project_id": "elayna-8c765",
-    "storage_bucket": "elayna-8c765.firebasestorage.app"
+    "project_number": "904058717448",
+    "project_id": "elaynanew",
+    "storage_bucket": "elaynanew.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:397389714278:android:0cca43178533b0d6902ea7",
+        "mobilesdk_app_id": "1:904058717448:android:240358ca9c1f355335d8bd",
         "android_client_info": {
           "package_name": "com.example.mycloset"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCnbAmMYbgmvHFR-kjIsbCi7OiRa1AZpn8"
+          "current_key": "AIzaSyAiLoTj-v1eNcXnUvxHtcInYWx--hsBAlo"
         }
       ],
       "services": {
