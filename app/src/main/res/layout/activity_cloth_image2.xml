@@ -131,7 +131,7 @@
             android:id="@+id/btn_favourite"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@android:drawable/btn_star"
+            android:src="@drawable/btn_star_empty"
             android:background="@android:color/transparent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toEndOf="@id/btn_back"/>

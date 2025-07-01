@@ -29,6 +29,8 @@ public class ProfilePageActivity extends AppCompatActivity {
     private int intUserId;
 
     private Button addClothButton;
+    private Button menuButton;
+    private Button favoritesButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,12 +95,14 @@ public class ProfilePageActivity extends AppCompatActivity {
         });
 
         addClothButton.setOnClickListener(v -> {
-            //Intent i = new Intent(getApplicationContext(),ClothImageActivity2.class);
             Intent i = new Intent(getApplicationContext(),AddingClothActivity.class);
             startActivity(i);
         });
 
-
+        menuButton.setOnClickListener(v -> {
+            Intent i = new Intent(getApplicationContext(),ClothImageActivity2.class);
+            startActivity(i);
+        });
 
     }
 

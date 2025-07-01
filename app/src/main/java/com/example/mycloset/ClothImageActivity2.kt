@@ -5,8 +5,8 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,11 +18,12 @@ import dev.romainguy.kotlin.math.Float3
 import io.github.sceneview.ar.ArSceneView
 import io.github.sceneview.ar.node.ArModelNode
 import io.github.sceneview.ar.node.PlacementMode
-import retrofit2.Retrofit
+import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Call
+import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 
 class ClothImageActivity2 : ComponentActivity() {
@@ -49,6 +50,7 @@ class ClothImageActivity2 : ComponentActivity() {
     private lateinit var bottomButton: Button
     private lateinit var shoesButton: Button
     private lateinit var accessoryButton: Button
+    private lateinit var favouriteButton: ImageButton
 
     private val fullClothList = mutableListOf<ClothImageActivity2.clothsJpg>()  // All clothes
     private val filteredClothList = mutableListOf<ClothImageActivity2.clothsJpg>()  // Filtered clothes
@@ -62,6 +64,7 @@ class ClothImageActivity2 : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cloth_image2)
+        findViews()
 
         val retrofit = Retrofit.Builder()
             .baseUrl("http://192.168.135.3:8080/")
@@ -126,7 +129,7 @@ class ClothImageActivity2 : ComponentActivity() {
         adapter.notifyDataSetChanged()
     }
 
-    private fun setupCameraAndAR(wardrobeService: WardrobeService) {
+    private fun findViews(){
         arSceneView = findViewById(R.id.cameraView)
         recyclerView = findViewById(R.id.recycler_clothes)
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
@@ -139,6 +142,10 @@ class ClothImageActivity2 : ComponentActivity() {
         bottomButton= findViewById(R.id.btn_bottom)
         shoesButton= findViewById(R.id.btn_shoe)
         accessoryButton= findViewById(R.id.btn_accessory)
+        favouriteButton = findViewById(R.id.btn_favourite)
+    }
+
+    private fun setupCameraAndAR(wardrobeService: WardrobeService) {
 
         user_id = getSharedPreferences("myClosetPrefs", MODE_PRIVATE)
             .getString("userId", null)
@@ -157,14 +164,17 @@ class ClothImageActivity2 : ComponentActivity() {
             val clothTypeInfo = urlToClothTypeMap[imageUrl]
 
             if (clothTypeInfo != null) {
-                val clothType = clothTypeInfo.clothType
-                val clothSeason = clothTypeInfo.season
+                val clothType = clothTypeInfo.season
+                val clothSeason = clothTypeInfo.clothType
                 Log.d("ClothInfo", "Selected cloth type: $clothType, season: $clothSeason")
 
                 // Now find the model that matches this cloth and load it
                 val matchingModel = modelList.find { it.modelname == cloth.clothname }
                 if (matchingModel != null) {
+                    favouriteButton.setBackgroundResource(R.drawable.btn_star_empty)
+                    Log.d("ClothType", clothType)
                     loadModel(matchingModel.modelname, matchingModel.modelId, clothType)
+
                 } else {
                     Toast.makeText(this, "Model not found for ${cloth.clothname}", Toast.LENGTH_SHORT).show()
                 }
@@ -173,6 +183,10 @@ class ClothImageActivity2 : ComponentActivity() {
                 Toast.makeText(this, "Type info not found for this cloth", Toast.LENGTH_SHORT).show()
             }
 
+        }
+
+        favouriteButton.setOnClickListener {
+            favouriteButton.setBackgroundResource(R.drawable.btn_star_filled)
         }
 
         allButton.setOnClickListener {
@@ -285,9 +299,6 @@ class ClothImageActivity2 : ComponentActivity() {
 
         //burada kategoriyr bak eğer aynı kategoriyse modelNodeu kaldır eğer farklıysa ekleee
         //modelNodes a bak eklenen modellerin ismi var mı oradaa
-
-        val name = modelRef
-        val model = clothsGlb(name, modelUri)
     }
 
 

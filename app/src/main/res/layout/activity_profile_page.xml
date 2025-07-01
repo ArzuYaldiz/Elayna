@@ -84,23 +84,23 @@
             android:textSize="20sp"/>
 
         <Button
-            android:id="@+id/language_button"
+            android:id="@+id/menu_button"
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
             android:backgroundTint="#129990"
-            android:text="@string/language"
+            android:text="@string/menu"
             android:textSize="20sp"/>
 
         <Button
-            android:id="@+id/private_policy_button"
+            android:id="@+id/Favourites_button"
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
             android:backgroundTint="#129990"
-            android:text="@string/private_policy"
+            android:text="@string/favourites"
             android:textSize="20sp"/>
 
         <Button

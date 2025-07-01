@@ -17,4 +17,7 @@
     <string name="shoe">Shoe</string>
     <string name="winter">Winter</string>
     <string name="place_clothing">Place Clothing</string>
+    <string name="Menu" />
+    <string name="menu">Menu</string>
+    <string name="favourites">Favourites</string>
 </resources>
