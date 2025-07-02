@@ -32,6 +32,8 @@ public class ProfilePageActivity extends AppCompatActivity {
     private Button menuButton;
     private Button favoritesButton;
 
+    private Button mainMenu;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,12 +106,24 @@ public class ProfilePageActivity extends AppCompatActivity {
             startActivity(i);
         });
 
+        mainMenu.setOnClickListener(v -> {
+            Intent i = new Intent(getApplicationContext(),ClothImageActivity2.class);
+            startActivity(i);
+        });
+
+        favoritesButton.setOnClickListener(v -> {
+            Intent i = new Intent(getApplicationContext(),FavouritesActivity.class);
+            startActivity(i);
+        });
+
     }
 
     private void findViews(){
         profile_pic = findViewById(R.id.profile_picture_profile);
         usernameTextview = findViewById(R.id.username_pp);
         addClothButton =findViewById(R.id.wardrobe_button);
-
+        menuButton = findViewById(R.id.menu_button);
+        favoritesButton = findViewById(R.id.Favourites_button);
+        mainMenu = findViewById(R.id.main_button);
     }
 }

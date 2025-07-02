@@ -4,6 +4,7 @@ import android.net.Uri;
 
 import com.example.mycloset.dataClasses.ClothRequestDto;
 import com.example.mycloset.dataClasses.ClothUploadDto;
+import com.example.mycloset.dataClasses.FavouritesDto;
 import com.example.mycloset.dataClasses.RegisterResponseDto;
 
 import java.util.List;
@@ -44,4 +45,9 @@ public interface WardrobeService {
     @POST("/cloth-type")
     Call <List<ClothRequestDto>> getClothType(@Query("user_id") int userId);
 
+    @POST("/favorites-upload")
+    Call <String> addFavourites(@Body List<String> favourites, @Query("user_id") String userId);
+
+    @POST("/favorites-get")
+    Call<List<FavouritesDto>> getFavourites(@Query("user_id") String user_id);
 }

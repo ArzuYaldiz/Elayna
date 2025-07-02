@@ -52,7 +52,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AddingClothActivity extends AppCompatActivity {
     ActivityResultLauncher<Intent> imagePickLauncher;
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     Uri selectedClothUri;
     private int intUserId;
     private ImageView clothImage;
@@ -247,11 +247,12 @@ public class AddingClothActivity extends AppCompatActivity {
                 public void onResponse(Call<Integer> call_id, Response<Integer> response) {
                     if(response.body() != null && response.isSuccessful())
                         cloth_id = response.body();
+                        cloth_id_string = String.valueOf(cloth_id);
                     if(cloth_id<10){
                         cloth_id_string = "0"+ String.valueOf(cloth_id);
                     }
 
-                    Log.d("CLOTH_ID:", String.valueOf(cloth_id));
+                    Log.d("CLOTH_ID:", String.valueOf(cloth_id_string));
 
                     FirebaseUtil.getWardrobeItemStorageRef(user_id, season, section, category, cloth_id_string).putFile(selectedClothUri)
                             .addOnCompleteListener(task ->{
@@ -423,6 +424,9 @@ public class AddingClothActivity extends AppCompatActivity {
                 }
             }
         };
+        if (scheduler == null || scheduler.isShutdown() || scheduler.isTerminated()) {
+            scheduler = Executors.newSingleThreadScheduledExecutor();
+        }
         scheduler.scheduleAtFixedRate(pollTask, 10, 10, TimeUnit.SECONDS);
         //scheduler.scheduleWithFixedDelay(pollTask, 10, 10, TimeUnit.SECONDS);
     }

@@ -45,9 +45,17 @@ public class FirebaseUtil {
 
     public static StorageReference getWardrobeItemStorageRef(String user_id, String seasonSpinner, String sectionSpinner, String categorySpinner, String cloth_id){
 
-        Log.d("CLOTH_ID FIREBASE:", String.valueOf(cloth_id));
+        Log.d("CLOTH_ID FIREBASE:", cloth_id);
         return FirebaseStorage.getInstance().getReference().child("Wardrobe").child(user_id)
                     .child(String.format("wardrobe_item_%s_%s_%s_%s.jpg",cloth_id, seasonSpinner,sectionSpinner,categorySpinner));
+
+
+    }
+
+    public static StorageReference getWardrobeItemStorageRef(String user_id, String url){
+
+        return FirebaseStorage.getInstance().getReference().child("Wardrobe").child(user_id)
+                .child("url");
 
 
     }
@@ -64,7 +72,7 @@ public class FirebaseUtil {
 
     public static StorageReference getWardrobeGlbStorageRef(String user_id, String seasonSpinner, String sectionSpinner, String categorySpinner, String cloth_id){
         return FirebaseStorage.getInstance().getReference().child("Wardrobe").child(user_id)
-                .child(String.format("wardrobe_item_%s_%s_%s_%s.jpg",cloth_id, seasonSpinner,sectionSpinner,categorySpinner));
+                .child(String.format("wardrobe_item_%s_%s_%s_%s.glb",cloth_id, seasonSpinner,sectionSpinner,categorySpinner));
 
     }
 

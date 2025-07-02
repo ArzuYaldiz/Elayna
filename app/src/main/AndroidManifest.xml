@@ -79,8 +79,6 @@
             </intent-filter>
         </activity>
 
-
-
         <activity android:name=".AddingClothActivity"
             android:exported="true">
             <intent-filter>
@@ -100,8 +98,23 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".FavouritesActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.INFO" />
+            </intent-filter>
+        </activity>
+
+
         <service
             android:name=".ClothImageActivity2"
+            android:foregroundServiceType="camera"
+            android:exported="false">
+        </service>
+
+        <service
+            android:name=".FavouritesActivity"
             android:foregroundServiceType="camera"
             android:exported="false">
         </service>

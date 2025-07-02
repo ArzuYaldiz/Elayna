@@ -1,6 +1,7 @@
 package com.example.mycloset;
 
 import APIService.WardrobeService
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -12,6 +13,7 @@ import androidx.activity.ComponentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mycloset.dataClasses.ClothRequestDto
+import com.example.mycloset.dataClasses.FavouritesDto
 import com.google.ar.core.Config
 import com.google.firebase.storage.FirebaseStorage
 import dev.romainguy.kotlin.math.Float3
@@ -23,13 +25,11 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
 
 
 class ClothImageActivity2 : ComponentActivity() {
 
     private lateinit var arSceneView: ArSceneView
-    private lateinit var modelNode: ArModelNode
     private val modelNodes = mutableListOf<ArModelNode>()
 
     private lateinit var recyclerView: RecyclerView;
@@ -37,6 +37,7 @@ class ClothImageActivity2 : ComponentActivity() {
 
     data class clothsJpg(var clothname:String, var imageId: Uri)
     data class clothsGlb(var modelname:String,var modelId:Uri)
+
 
     private var clothList = mutableListOf<clothsJpg>()
     private var modelList = mutableListOf<clothsGlb>()
@@ -51,6 +52,7 @@ class ClothImageActivity2 : ComponentActivity() {
     private lateinit var shoesButton: Button
     private lateinit var accessoryButton: Button
     private lateinit var favouriteButton: ImageButton
+    private lateinit var returnButton: ImageButton
 
     private val fullClothList = mutableListOf<ClothImageActivity2.clothsJpg>()  // All clothes
     private val filteredClothList = mutableListOf<ClothImageActivity2.clothsJpg>()  // Filtered clothes
@@ -60,6 +62,9 @@ class ClothImageActivity2 : ComponentActivity() {
 
     private val modelNodesByType = mutableMapOf<String, ArModelNode>()
     val urlToClothTypeMap = mutableMapOf<String, ClothRequestDto>()
+
+    private val favorites = mutableListOf<String>()
+    private lateinit var favouritesDto: FavouritesDto
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -143,6 +148,7 @@ class ClothImageActivity2 : ComponentActivity() {
         shoesButton= findViewById(R.id.btn_shoe)
         accessoryButton= findViewById(R.id.btn_accessory)
         favouriteButton = findViewById(R.id.btn_favourite)
+        returnButton = findViewById(R.id.btn_back)
     }
 
     private fun setupCameraAndAR(wardrobeService: WardrobeService) {
@@ -185,8 +191,46 @@ class ClothImageActivity2 : ComponentActivity() {
 
         }
 
+        returnButton.setOnClickListener {
+            val i = Intent(getApplicationContext(), ProfilePageActivity::class.java)
+            startActivity(i)
+        }
+
         favouriteButton.setOnClickListener {
             favouriteButton.setBackgroundResource(R.drawable.btn_star_filled)
+
+            favouritesDto = FavouritesDto()
+
+            for(nodes in modelNodes){
+                Log.d("Sending DTO", nodes.name.toString())
+                favorites.add(nodes.name.toString())
+            }
+
+            Log.d("Model List: ",favorites.toString())
+            Log.d("USER: " , user_id!!)
+            wardrobeService.addFavourites(favorites, user_id!!).enqueue(object : Callback<String> {
+                override fun onResponse(
+                    call: Call<String?>,
+                    response: Response<String?>
+                ) {
+                    if (response.isSuccessful && response.body() != null) {
+
+                        Toast.makeText(this@ClothImageActivity2, response.body().toString(), Toast.LENGTH_LONG).show()
+                        Log.d("ClothList: ", response.body().toString())
+
+                    } else {
+                        Log.e("ERROR: ","No data found")
+                    }
+                }
+
+                override fun onFailure(call: Call<String?>, t: Throwable) {
+                    Log.e("ERROR: ","No data found: ", t)
+                }
+
+            })
+            for(nodes in modelNodes){
+                favorites.remove(nodes.name.toString())
+            }
         }
 
         allButton.setOnClickListener {
@@ -280,7 +324,7 @@ class ClothImageActivity2 : ComponentActivity() {
 
         val newNode = ArModelNode(arSceneView.engine, PlacementMode.INSTANT).apply {
             isVisible = true
-
+            name = modelRef
             loadModelGlbAsync(
                 glbFileLocation = modelUri.toString(),
                 centerOrigin = null

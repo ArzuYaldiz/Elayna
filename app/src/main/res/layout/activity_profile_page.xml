@@ -63,7 +63,7 @@
 
         </LinearLayout>
 
-        <Button
+       <!-- <Button
             android:id="@+id/see_profile_information_button"
             android:layout_width="300dp"
             android:layout_height="50dp"
@@ -71,14 +71,14 @@
             android:layout_marginTop="50dp"
             android:backgroundTint="#129990"
             android:text="@string/profile_information"
-            android:textSize="20sp"/>
+            android:textSize="20sp"/>  -->
 
         <Button
             android:id="@+id/wardrobe_button"
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="100dp"
             android:backgroundTint="#129990"
             android:text="Add A Cloth"
             android:textSize="20sp"/>
@@ -116,7 +116,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginTop="65dp"
+            android:layout_marginTop="70dp"
             android:background="#096B68">
 
             <Button
